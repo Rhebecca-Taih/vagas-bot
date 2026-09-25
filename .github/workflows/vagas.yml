@@ -45,9 +45,9 @@ jobs:
       PRIORIDADE_FIRESTORE_CHAVE: ${{ secrets.PRIORIDADE_FIRESTORE_CHAVE }}
       PRIORIDADE_URL_VAGAS: ${{ secrets.PRIORIDADE_URL_VAGAS }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
           cache: pip
@@ -55,7 +55,7 @@ jobs:
       - run: pip install -r requirements.txt
 
       - name: Restaurar histórico
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v6
         with:
           path: dados
           key: dados-${{ github.run_id }}
@@ -74,7 +74,7 @@ jobs:
 
       - name: Salvar histórico
         if: always()
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v6
         with:
           path: dados
           key: dados-${{ github.run_id }}
