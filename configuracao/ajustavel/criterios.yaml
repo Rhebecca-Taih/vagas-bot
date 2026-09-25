@@ -1,0 +1,95 @@
+# Áreas, cidade e empresas prioritárias/bloqueadas: no .env.
+
+# Mínimo de termos distintos de AREA_TERMOS na descrição. Título: 1 basta.
+minimo_termos_na_descricao: 2
+
+# Remoto: qualquer cidade, salvo exigência de residência fora da base.
+# Híbrido: só CIDADE_BASE. Presencial: só com aceitar_presencial.
+localizacao:
+  aceitar_presencial: false
+
+# EMPRESAS_PRIORITARIAS: sempre incluídas.
+prioridade:
+  sempre_incluir: true
+
+# Estrelas (1 a 5): 1 de base
+#   +2 empresas_top | +1 empresas_boas | -1 empresas_intermediarias
+#   +1 termo de ESTRELAS_TERMOS_AREA no título | +1 termo de ESTRELAS_TERMOS_PERFIL no título
+#   +1 estágio ou trainee
+classificacao:
+  empresas_top:
+    - "Samsung"
+    - "Motorola"
+    - "SAP"
+    - "Itaú"
+    - "XP Inc"
+    - "Mercado Livre"
+    - "Nubank"
+    - "iFood"
+    - "PagBank"
+    - "PicPay"
+    - "Stone"
+    - "Serasa Experian"
+    - "Equifax"
+    - "Google"
+    - "Microsoft"
+    - "Amazon"
+    - "IBM"
+    - "Oracle"
+    - "TOTVS"
+    - "Bradesco"
+    - "Santander"
+    - "BTG"
+    - "Banco do Brasil"
+    - "Embraer"
+    - "Natura"
+    - "Ambev"
+    - "Petrobras"
+    - "Siemens"
+    - "Bosch"
+    - "Dell"
+    - "CI&T"
+    - "Thoughtworks"
+    - "Zup"
+    - "Hotmart"
+    - "Webmotors"
+    - "Michelin"
+    - "Colgate"
+    - "Unilever"
+    - "Nestlé"
+    - "3M"
+    - "General Motors"
+    - "Mercedes-Benz"
+    - "CNH"
+    - "Uber"
+    - "PayPal"
+    - "Mastercard"
+    - "Visa"
+    - "Flextronics"
+    - "Eldorado"
+  empresas_boas:
+    - "Stefanini"
+    - "BairesDev"
+    - "Artefact"
+    - "TELUS"
+    - "SPC Brasil"
+    - "Unimed"
+    - "Neogrid"
+    - "SoftExpert"
+    - "Efí"
+    - "Evertec"
+    - "Accenture"
+    - "Capgemini"
+    - "NTT Data"
+    - "Globant"
+  empresas_intermediarias:
+    - "Jobbol"
+    - "Alpha Estágio"
+    - "Rede Cidadã"
+    - "Confidencial"
+    - "Oportunidades"
+    - "Universia"
+    - "IEL"
+    - "Nube"
+    - "Super Estágios"
+    - "CIEE - Centro"

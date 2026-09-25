@@ -1,0 +1,10 @@
+# ativo: false desliga a fonte.
+fontes:
+  ciee:
+    ativo: true
+  site_prioritario:
+    ativo: true
+  gupy:
+    ativo: true
+  linkedin:
+    ativo: true

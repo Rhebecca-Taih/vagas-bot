@@ -1,0 +1,80 @@
+name: Bot de Vagas TI
+
+on:
+  # nunca horário de Brasília > agendamento em UTC (+3h)
+  schedule:
+    - cron: "*/30 10-20 * * *"
+    - cron: "5 21 * * *"
+  workflow_dispatch:
+    inputs:
+      tarefa:
+        description: "O que executar"
+        type: choice
+        options: [buscar_vagas, enviar_resumo, marcar_atuais_como_vistas]
+        default: buscar_vagas
+
+# nunca execução simultânea > histórico gravado em dobro
+concurrency:
+  group: vagas-bot
+  cancel-in-progress: false
+
+jobs:
+  executar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      TZ: America/Sao_Paulo
+      TELEGRAM_ESTAGIO_BOT_TOKEN: ${{ secrets.TELEGRAM_ESTAGIO_BOT_TOKEN }}
+      TELEGRAM_ESTAGIO_CHAT_ID: ${{ secrets.TELEGRAM_ESTAGIO_CHAT_ID }}
+      TELEGRAM_PRIORIDADE_BOT_TOKEN: ${{ secrets.TELEGRAM_PRIORIDADE_BOT_TOKEN }}
+      TELEGRAM_PRIORIDADE_CHAT_ID: ${{ secrets.TELEGRAM_PRIORIDADE_CHAT_ID }}
+      TELEGRAM_TI_BOT_TOKEN: ${{ secrets.TELEGRAM_TI_BOT_TOKEN }}
+      TELEGRAM_TI_CHAT_ID: ${{ secrets.TELEGRAM_TI_CHAT_ID }}
+      CIDADE_BASE: ${{ secrets.CIDADE_BASE }}
+      EMPRESAS_PRIORITARIAS: ${{ secrets.EMPRESAS_PRIORITARIAS }}
+      UF_BASE: ${{ secrets.UF_BASE }}
+      AREA_TERMOS: ${{ secrets.AREA_TERMOS }}
+      AREA_TERMOS_TITULO: ${{ secrets.AREA_TERMOS_TITULO }}
+      AREA_EXCLUIR: ${{ secrets.AREA_EXCLUIR }}
+      AREA_EXCLUIR_TITULO: ${{ secrets.AREA_EXCLUIR_TITULO }}
+      ESTRELAS_TERMOS_AREA: ${{ secrets.ESTRELAS_TERMOS_AREA }}
+      ESTRELAS_TERMOS_PERFIL: ${{ secrets.ESTRELAS_TERMOS_PERFIL }}
+      EMPRESAS_BLOQUEADAS: ${{ secrets.EMPRESAS_BLOQUEADAS }}
+      PRIORIDADE_NOME_EMPRESA: ${{ secrets.PRIORIDADE_NOME_EMPRESA }}
+      PRIORIDADE_FIRESTORE_PROJETO: ${{ secrets.PRIORIDADE_FIRESTORE_PROJETO }}
+      PRIORIDADE_FIRESTORE_CHAVE: ${{ secrets.PRIORIDADE_FIRESTORE_CHAVE }}
+      PRIORIDADE_URL_VAGAS: ${{ secrets.PRIORIDADE_URL_VAGAS }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - run: pip install -r requirements.txt
+
+      - name: Restaurar histórico
+        uses: actions/cache/restore@v4
+        with:
+          path: dados
+          key: dados-${{ github.run_id }}
+          restore-keys: dados-
+
+      - name: Executar
+        run: |
+          if [ "${{ github.event.schedule }}" = "5 21 * * *" ] || [ "${{ inputs.tarefa }}" = "enviar_resumo" ]; then
+            python executar/buscar_vagas.py
+            python executar/enviar_resumo.py
+          elif [ "${{ inputs.tarefa }}" = "marcar_atuais_como_vistas" ]; then
+            python executar/buscar_vagas.py --sem-notificar
+          else
+            python executar/buscar_vagas.py
+          fi
+
+      - name: Salvar histórico
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: dados
+          key: dados-${{ github.run_id }}

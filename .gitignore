@@ -1,0 +1,6 @@
+configuracao/sensivel/*
+!configuracao/sensivel/.gitkeep
+dados/
+.venv/
+__pycache__/
+*.pyc
