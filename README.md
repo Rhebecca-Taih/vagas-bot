@@ -23,7 +23,7 @@
   <img src="https://img.shields.io/badge/Python-000000?style=for-the-badge&logo=python&logoColor=deaaf9" alt="Python" />
   <img src="https://img.shields.io/badge/GitHub_Actions-000000?style=for-the-badge&logo=githubactions&logoColor=deaaf9" alt="GitHub Actions" />
   <img src="https://img.shields.io/badge/Telegram_Bot_API-000000?style=for-the-badge&logo=telegram&logoColor=deaaf9" alt="Telegram Bot API" />
-  <img src="https://img.shields.io/badge/status-em_produção-8323B5?style=for-the-badge" alt="Status: em produção" />
+  <img src="https://img.shields.io/badge/status-finalizado-8323B5?style=for-the-badge" alt="Status: finalizado" />
 </div>
 
 <br>
