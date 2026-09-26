@@ -175,6 +175,7 @@ os dados reais.
 | `ESTRELAS_TERMOS_AREA` / `ESTRELAS_TERMOS_PERFIL` | Termos no título que somam estrelas |
 | `EMPRESAS_PRIORITARIAS` | Empresas sempre exibidas, separadas por vírgula |
 | `EMPRESAS_BLOQUEADAS` | Empresas nunca exibidas, separadas por vírgula |
+| `GRUPOS_VAGAS_EXCLUSIVAS` | Públicos cujas vagas exclusivas ou afirmativas são descartadas |
 | `PRIORIDADE_NOME_EMPRESA` | Nome exibido nas vagas do site da empresa prioritária |
 | `PRIORIDADE_FIRESTORE_PROJETO` / `_CHAVE` | Acesso público ao site de carreiras da empresa prioritária |
 | `PRIORIDADE_URL_VAGAS` | Página de vagas da empresa prioritária |

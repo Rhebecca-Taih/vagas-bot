@@ -29,6 +29,11 @@ EXIGENCIAS_DE_LOCAL = [
 CIDADE_UF_NO_TITULO = re.compile(r"(?P<lugar>[A-ZÀ-Ú][A-Za-zÀ-ú ]{2,40})\s*/\s*(?P<uf>[A-Z]{2})\b")
 LUGARES_NACIONAIS = ("brasil", "território nacional", "todo o país")
 
+PUBLICO_EXCLUSIVO = re.compile(
+    r"(?i:\b(?:afirmativ|exclusiv)\w*\s+(?:para|a|à|às|aos|destinad\w*\s+(?:a|à|às|aos|para))\s+)"
+    r"(?P<publico>[^.;:!?\n|]{2,80})"
+)
+
 
 # ⋆⭒˚.⋆ ⋆⭒˚.⋆ ⋆⭒˚.⋆ ⋆⭒˚.⋆ ⋆⭒˚.⋆ ⋆⭒˚.⋆ ⋆⭒˚.⋆ ⋆⭒˚.⋆ ⋆⭒˚.⋆ ⋆⭒˚.⋆
 # FILTRO POR ÁREA
@@ -46,9 +51,16 @@ def passa_na_area(vaga: Vaga, criterios: dict) -> bool:
     return not contem_algum(f"{vaga.titulo} {vaga.descricao}", carregar.AREA_EXCLUIR)
 
 
+def exclusiva_para_outro_grupo(vaga: Vaga) -> bool:
+    texto = f"{vaga.titulo}\n{vaga.descricao}"
+    return any(contem_algum(m.group("publico"), carregar.GRUPOS_VAGAS_EXCLUSIVAS)
+               for m in PUBLICO_EXCLUSIVO.finditer(texto))
+
+
 def barrada(vaga: Vaga) -> bool:
     return (contem_algum(vaga.empresa, carregar.EMPRESAS_BLOQUEADAS)
-            or contem_algum(vaga.titulo, carregar.AREA_EXCLUIR_TITULO))
+            or contem_algum(vaga.titulo, carregar.AREA_EXCLUIR_TITULO)
+            or exclusiva_para_outro_grupo(vaga))
 
 
 # ⋆⭒˚.⋆ ⋆⭒˚.⋆ ⋆⭒˚.⋆ ⋆⭒˚.⋆ ⋆⭒˚.⋆ ⋆⭒˚.⋆ ⋆⭒˚.⋆ ⋆⭒˚.⋆ ⋆⭒˚.⋆ ⋆⭒˚.⋆
