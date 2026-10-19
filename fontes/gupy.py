@@ -8,7 +8,7 @@ import requests
 from configuracao import carregar
 from fontes.base import Scraper, Vaga
 
-API = "https://employability-portal.gupy.io/api/v1/jobs"
+API = "https://portal.gupy.io/api/job-search/jobs"
 TAMANHO_PAGINA = 100  # nunca acima de 100 > API recusa
 MAX_PAGINAS = 10
 PAUSA_ENTRE_REQUISICOES = 0.5
