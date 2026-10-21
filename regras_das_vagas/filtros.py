@@ -104,6 +104,9 @@ def passa_no_local(vaga: Vaga, criterios: dict) -> bool:
     local_desconhecido = not vaga.local.strip()
     na_cidade_base = bool(cidade_base) and cidade_base in f"{vaga.local} {vaga.titulo}".lower()
 
+    if vaga.programa and regras.get("programas_em_qualquer_local", False):
+        return True
+
     if vaga.prioritaria:
         remota = modalidade in ("remoto", "home office") or (
             not modalidade and "remoto" in texto and "híbrido" not in texto and "hibrido" not in texto

@@ -23,6 +23,7 @@ class Vaga:
     eh_estagio: bool | None = None
     prioritaria: bool = False
     estrelas: int = 0
+    programa: bool = False
 
 
 class Scraper:

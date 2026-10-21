@@ -39,7 +39,7 @@ por relevância e prazo de inscrição.
 ## ⋆˚✮ Funcionalidades
 | Funcionalidade | Descrição |
 | :--- | :--- |
-| Coleta em várias fontes | Vitrine do CIEE, portal da Gupy, busca pública do LinkedIn e site de carreiras de uma empresa prioritária caso tenha preferências |
+| Coleta em várias fontes | Vitrine do CIEE, portal da Gupy, busca pública do LinkedIn, programas de estágio e trainee da Eureca e site de carreiras de uma empresa prioritária caso tenha preferências |
 | Filtro por perfil | Área desejada, nível de entrada e exclusão de vagas indesejadas |
 | Regra de local | Vagas remotas de qualquer cidade, respeitando exigência de residência; híbridas apenas na cidade base |
 | Prazo de inscrição | Mantém somente processos com inscrição aberta e informa quantos dias faltam |

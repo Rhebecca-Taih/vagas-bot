@@ -6,6 +6,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from configuracao import carregar
 from envio import historico, telegram
 from fontes.ciee import ScraperCiee
+from fontes.eureca import ScraperEureca
+from fontes.greenhouse import ScraperGreenhouse
 from fontes.gupy import ScraperGupy
 from fontes.linkedin import ScraperLinkedin
 from fontes.site_prioritario import ScraperSitePrioritario
@@ -19,6 +21,8 @@ SCRAPERS = {
     "site_prioritario": ScraperSitePrioritario,
     "gupy": ScraperGupy,
     "linkedin": ScraperLinkedin,
+    "eureca": ScraperEureca,
+    "greenhouse": ScraperGreenhouse,
 }
 
 

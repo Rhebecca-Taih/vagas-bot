@@ -33,6 +33,8 @@ def classificar(vaga: Vaga, criterios: dict) -> int:
         nota += 1
     if ESTAGIO_OU_TRAINEE.search(vaga.titulo):
         nota += 1
+    if vaga.programa:
+        nota += 1
 
     vaga.estrelas = max(1, min(5, nota))
     return vaga.estrelas

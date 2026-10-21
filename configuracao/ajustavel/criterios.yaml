@@ -5,8 +5,10 @@ minimo_termos_na_descricao: 2
 
 # Remoto: qualquer cidade, salvo exigência de residência fora da base.
 # Híbrido: só CIDADE_BASE. Presencial: só com aceitar_presencial.
+# Programas (Eureca): local definido na página do programa > só filtro de área.
 localizacao:
   aceitar_presencial: false
+  programas_em_qualquer_local: true
 
 # EMPRESAS_PRIORITARIAS: sempre incluídas.
 prioridade:
