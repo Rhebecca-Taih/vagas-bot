@@ -39,16 +39,32 @@ PUBLICO_EXCLUSIVO = re.compile(
 # FILTRO POR ÁREA
 # ⋆⭒˚.⋆ ⋆⭒˚.⋆ ⋆⭒˚.⋆ ⋆⭒˚.⋆ ⋆⭒˚.⋆ ⋆⭒˚.⋆ ⋆⭒˚.⋆ ⋆⭒˚.⋆ ⋆⭒˚.⋆ ⋆⭒˚.⋆
 
-def passa_na_area(vaga: Vaga, criterios: dict) -> bool:
+def _texto_passa_na_area(titulo: str, descricao: str, criterios: dict) -> bool:
     incluir = carregar.AREA_TERMOS
     incluir_titulo = carregar.AREA_TERMOS_TITULO
     minimo_descricao = criterios.get("minimo_termos_na_descricao", 1)
     if (incluir or incluir_titulo) and not (
-        contem_algum(vaga.titulo, incluir + incluir_titulo)
-        or len(termos_distintos(vaga.descricao, incluir)) >= minimo_descricao
+        contem_algum(titulo, incluir + incluir_titulo)
+        or len(termos_distintos(descricao, incluir)) >= minimo_descricao
     ):
         return False
-    return not contem_algum(f"{vaga.titulo} {vaga.descricao}", carregar.AREA_EXCLUIR)
+    return not contem_algum(f"{titulo} {descricao}", carregar.AREA_EXCLUIR)
+
+
+def _area_de_programa_e_ti(nome: str, descricao: str) -> bool:
+    if contem_algum(f"{nome} {descricao}", carregar.AREA_EXCLUIR):
+        return False
+    return contem_algum(nome, carregar.AREA_TERMOS) or (
+        contem_algum(nome, carregar.AREA_TERMOS_TITULO) and bool(termos_distintos(descricao, carregar.AREA_TERMOS))
+    )
+
+
+def passa_na_area(vaga: Vaga, criterios: dict) -> bool:
+    if vaga.programa and vaga.areas_do_programa:
+        vaga.areas_aceitas = [nome for nome, descricao in vaga.areas_do_programa
+                              if _area_de_programa_e_ti(nome, descricao)]
+        return bool(vaga.areas_aceitas)
+    return _texto_passa_na_area(vaga.titulo, vaga.descricao, criterios)
 
 
 def exclusiva_para_outro_grupo(vaga: Vaga) -> bool:

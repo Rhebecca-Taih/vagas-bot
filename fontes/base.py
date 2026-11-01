@@ -1,5 +1,5 @@
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import date
 
 # "\sI$": nível I no fim do título (ex.: Analista I)
@@ -24,6 +24,8 @@ class Vaga:
     prioritaria: bool = False
     estrelas: int = 0
     programa: bool = False
+    areas_do_programa: list[tuple[str, str]] = field(default_factory=list)
+    areas_aceitas: list[str] = field(default_factory=list)
 
 
 class Scraper:

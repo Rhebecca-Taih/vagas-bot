@@ -70,9 +70,10 @@ class ScraperEureca(Scraper):
                 continue
 
             vagas_do_programa = programa.get("jobs") or []
-            areas = "\n".join(
-                f"{v.get('name', '')}: {_html_para_texto(v.get('description'))}" for v in vagas_do_programa
-            )
+            areas_do_programa = [
+                ((v.get("name") or "").strip(), _html_para_texto(v.get("description"))) for v in vagas_do_programa
+            ]
+            areas = "\n".join(f"{nome}: {descricao}" for nome, descricao in areas_do_programa)
             vagas.append(
                 Vaga(
                     id=f"eureca_{programa['id']}",
@@ -85,6 +86,7 @@ class ScraperEureca(Scraper):
                     fim_inscricao=fim,
                     eh_estagio=True if contrato in CONTRATOS_ESTAGIO else (False if contrato == "trainee" else None),
                     programa=True,
+                    areas_do_programa=areas_do_programa,
                 )
             )
         return vagas

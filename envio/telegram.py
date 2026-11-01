@@ -81,6 +81,8 @@ def ordenar(vagas: list) -> list:
 def formatar_vaga(vaga) -> str:
     linhas = [f"{estrelas_texto(vaga.estrelas)} <b>{vaga.titulo}</b>".strip(),
               f"{vaga.empresa} — {vaga.local}"]
+    if vaga.areas_aceitas:
+        linhas.append("Áreas: " + ", ".join(vaga.areas_aceitas))
     prazo = prazo_texto(vaga.fim_inscricao)
     if prazo:
         linhas.append(prazo)
