@@ -41,7 +41,7 @@ por relevância e prazo de inscrição.
 | :--- | :--- |
 | Coleta em várias fontes | Vitrine do CIEE, portal da Gupy, busca pública do LinkedIn, programas de estágio e trainee da Eureca e site de carreiras de uma empresa prioritária caso tenha preferências |
 | Filtro por perfil | Área desejada, nível de entrada e exclusão de vagas indesejadas |
-| Regra de local | Vagas remotas de qualquer cidade, respeitando exigência de residência; híbridas apenas na cidade base |
+| Regra de local | Vagas remotas de qualquer cidade, respeitando exigência de residência e de ida ao escritório citadas no texto; híbridas apenas na cidade base |
 | Prazo de inscrição | Mantém somente processos com inscrição aberta e informa quantos dias faltam |
 | Classificação | Nota de 1 a 5 estrelas por empresa, aderência ao perfil e nível da vaga |
 | Três canais | Bots separados para estágios, empresa prioritária e vagas de TI que não são estágio |
@@ -81,7 +81,7 @@ Dispara a cada 30 minutos, das 7h às 18h, pelo GitHub Actions
 │
 ├─ Aplica os critérios de perfil
 │   ├─ Empresa bloqueada ou vaga exclusiva  → descarta
-│   ├─ Vaga remota                          → aceita, exceto se exigir residir em outra cidade
+│   ├─ Vaga remota                          → aceita, exceto se exigir residir ou ir ao escritório em outra cidade
 │   ├─ Vaga híbrida                         → aceita apenas na cidade base
 │   ├─ Vaga presencial                      → descarta, exceto da empresa prioritária
 │   └─ Área fora do perfil                  → descarta

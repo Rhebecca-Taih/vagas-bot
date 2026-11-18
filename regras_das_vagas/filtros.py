@@ -17,10 +17,15 @@ ESTADOS = {
 }
 
 _LUGAR = r"(?P<lugar>[A-ZÀ-Ú][^.;:,!?\n()|]{2,60})"
-# residir/morar em X, região metropolitana de X, exclusiva X
+# residir/morar em X, residentes de X, região metropolitana de X, exclusiva X, must be based in X
+# nunca "resid\w*" solto > "Residência em TI" é nome de programa, não exigência de morar
 EXIGENCIAS_DE_LOCAL = [
-    re.compile(r"(?i:\b(?:resid(?:ir|ente|entes|a)|morar|moradores?|reside[mn]?)\s+"
-               r"(?:em|na|no|nas|nos|na região de|próximo a|proximo a|perto de)\s+)" + _LUGAR),
+    re.compile(r"(?i:\b(?:resid(?:ir|ente|entes|a|am|e|em|indo)|morar|morador(?:a|es|as)?(?:\(a\))?)\s+"
+               r"(?:em|na|no|nas|nos|de|da|do|dos|das|na região de|próximo a|proximo a|perto de)\s+)" + _LUGAR),
+    re.compile(r"(?i:\b(?:must|should)\s+(?:be\s+)?(?:based|located|living|live|reside)\s+in\s+)" + _LUGAR),
+    re.compile(r"(?i:\b(?:resid\w*|morar|morador\w*|candidat\w*|profissiona\w*|pessoas|vaga|oportunidade)\b"
+               r"[^.;:!?\n]{0,40}?\b(?:em|de|da|do|para)\s+)"
+               r"(?P<lugar>[A-ZÀ-Ú][\wÀ-ú ]{2,40}?)\s+(?i:(?:e|ou)\s+(?:regi[ãa]o|arredores|cidades\s+vizinhas))"),
     re.compile(r"(?i:\bregião\s+metropolitana\s+(?:de|do|da)\s+)" + _LUGAR),
     re.compile(r"(?i:\bexclusiv[ao]s?\s+(?:para\s+)?(?:residentes|moradores)\s+(?:de|em|da|do)\s+)" + _LUGAR),
     re.compile(r"(?i:\bexclusiv[ao]\s+)"
@@ -28,6 +33,28 @@ EXIGENCIAS_DE_LOCAL = [
 ]
 CIDADE_UF_NO_TITULO = re.compile(r"(?P<lugar>[A-ZÀ-Ú][A-Za-zÀ-ú ]{2,40})\s*/\s*(?P<uf>[A-Z]{2})\b")
 LUGARES_NACIONAIS = ("brasil", "território nacional", "todo o país")
+
+# residir perto "de uma das unidades": a lista de cidades vem logo depois
+PERTO_DA_EMPRESA = re.compile(
+    r"(?i)\b(?:resid\w*|morar|morador\w*)\s+(?:pr[óo]xim[oa]s?|perto|nas\s+proximidades)\s+"
+    r"(?:a|à|ao|aos|às|de|da|do|das|dos)?\s*(?:uma\s+das\s+|um\s+dos\s+|nossas?\s+|nossos?\s+)?"
+    r"(?:unidades?|lojas?|escrit[óo]rios?|sedes?|filia(?:l|is)|empresa|f[áa]bricas?|plantas?|locais)\b"
+)
+PRESENCIAL_NO_TEXTO = re.compile(
+    r"(?i)\b(?:oportunidades?|vagas?|modelo|regime|formato|trabalho|atua[çc][ãa]o)\s+"
+    r"(?:de\s+trabalho\s*)?:?\s*(?:100%\s+)?presencia(?:l|is)\b|\b100%\s+presencial\b"
+)
+DIAS_NO_ESCRITORIO = re.compile(
+    r"(?i)\b(?:\d|uma|duas|tr[êe]s|quatro)\s*(?:x|vez(?:es)?|dias?)\s*(?:por|na|/|ao|a\s+cada)\s*semana\b"
+    r"[^.;\n]{0,80}?\b(?:escrit[óo]rio|sede|presencia\w*|empresa|unidade|f[áa]brica)"
+    r"|\bpresencia\w*[^.;\n]{0,40}?\b(?:\d|uma|duas|tr[êe]s|quatro)\s*(?:x|vez(?:es)?|dias?)\s*(?:por|na|/|ao)\s*semana\b"
+)
+# nunca contar "2x por semana" de benefício > ginástica laboral e aulas não são ida ao escritório
+BENEFICIO_PERTO = re.compile(r"(?i)gin[áa]stica|laboral|aulas?\b|academia|yoga|ioga|terapia|benef[íi]cio")
+QUALQUER_LUGAR = re.compile(
+    r"(?i)qualquer\s+(?:lugar|regi[ãa]o|cidade|estado|parte)\s+do\s+(?:pa[íi]s|brasil)"
+    r"|todo\s+o\s+(?:brasil|pa[íi]s|territ[óo]rio)|outras\s+regi[õo]es|(?:100%|totalmente)\s+remot"
+)
 
 PUBLICO_EXCLUSIVO = re.compile(
     r"(?i:\b(?:afirmativ|exclusiv)\w*\s+(?:para|a|à|às|aos|destinad\w*\s+(?:a|à|às|aos|para))\s+)"
@@ -88,6 +115,7 @@ def _locais_exigidos(vaga: Vaga) -> list[str]:
     lugares = [m.group("lugar") for padrao in EXIGENCIAS_DE_LOCAL for m in padrao.finditer(texto)]
     lugares += [f"{m.group('lugar')}/{m.group('uf')}" for m in CIDADE_UF_NO_TITULO.finditer(vaga.titulo)
                 if m.group("uf") in ESTADOS]
+    lugares += [texto[m.end():m.end() + 300] or "perto da empresa" for m in PERTO_DA_EMPRESA.finditer(texto)]
     return [lugar for lugar in lugares if not any(n in lugar.lower() for n in LUGARES_NACIONAIS)]
 
 
@@ -105,7 +133,19 @@ def _local_aceito(lugar: str) -> bool:
 
 def remoto_com_local_exigido(vaga: Vaga) -> bool:
     exigidos = _locais_exigidos(vaga)
-    return bool(exigidos) and not any(_local_aceito(lugar) for lugar in exigidos)
+    if exigidos and not any(_local_aceito(lugar) for lugar in exigidos):
+        return True
+    texto = f"{vaga.titulo}\n{vaga.descricao}"
+    if QUALQUER_LUGAR.search(texto):
+        return False
+    if PRESENCIAL_NO_TEXTO.search(texto):
+        return True
+    return _dias_no_escritorio(texto) and not _local_aceito(texto)
+
+
+def _dias_no_escritorio(texto: str) -> bool:
+    return any(not BENEFICIO_PERTO.search(texto[max(0, m.start() - 60):m.end() + 20])
+               for m in DIAS_NO_ESCRITORIO.finditer(texto))
 
 
 def passa_no_local(vaga: Vaga, criterios: dict) -> bool:
